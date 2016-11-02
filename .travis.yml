@@ -1,0 +1,10 @@
+sudo: false
+language: node_js
+node_js:
+  - "4.1"
+before_install:
+  - cd src/javascript
+before_script:
+  - npm install gulp -g 
+  - npm install gulp --save-dev
+script: gulp
