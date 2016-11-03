@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/nmishra/convoyarge#readme",
   "devDependencies": {
+    "browser-sync": "^2.17.5",
     "del": "^2.2.2",
     "gulp-autoprefixer": "^3.1.1",
     "gulp-cache": "^0.4.5",
@@ -25,11 +26,11 @@
     "gulp-imagemin": "^3.1.0",
     "gulp-jshint": "^2.0.2",
     "gulp-livereload": "^3.8.1",
+    "gulp-load-plugins": "^1.4.0",
     "gulp-notify": "^2.2.0",
     "gulp-rename": "^1.2.2",
     "gulp-ruby-sass": "^2.1.0",
     "gulp-uglify": "^2.0.0",
-    "jshint": "^2.9.4",
     "minimatch": "^3.0.3"
   }
 }
