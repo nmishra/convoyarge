@@ -31,6 +31,7 @@ Setup
 [09:30:08] Finished 'styles' after 32 ms
 [09:30:08] Finished 'scripts' after 25 ms
 [09:30:08] Finished 'images' after 15 ms```  
+8. To serve the webapp, run ```cd ~/products/convoyarge/src/javascript && gulp serve```
 
 Development 
 -----------------------
