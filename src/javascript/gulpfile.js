@@ -1,64 +1,110 @@
 /*!
  * gulp
- * $ npm install gulp-ruby-sass gulp-autoprefixer gulp-cssnano gulp-jshint gulp-concat gulp-uglify gulp-imagemin gulp-notify gulp-rename gulp-livereload gulp-cache del --save-dev
+ * $ npm install gulp-ruby-sass gulp-autoprefixer gulp-cssnano gulp-jshint gulp-concat gulp-uglify gulp-imagemin gulp-notify gulp-rename gulp-livereload gulp-cache del browser-sync gulp-load-plugins eslint eslint-config-google --save-dev
  */
 
 // Load plugins
 var gulp = require('gulp'),
-    sass = require('gulp-ruby-sass'),
-    autoprefixer = require('gulp-autoprefixer'),
-    cssnano = require('gulp-cssnano'),
-    jshint = require('gulp-jshint'),
-    uglify = require('gulp-uglify'),
-    imagemin = require('gulp-imagemin'),
-    rename = require('gulp-rename'),
-    concat = require('gulp-concat'),
-    notify = require('gulp-notify'),
-    cache = require('gulp-cache'),
-    livereload = require('gulp-livereload'),
-    del = require('del');
+	plugins = require('gulp-load-plugins')({
+      		pattern: '*',
+			replaceString: /^gulp(-|\.)/, // what to remove from the name of the module when adding it to the context
+			camelize: true, // if true, transforms hyphenated plugins names to camel case
+			lazy: true, // whether the plugins should be lazy loaded on demand
+          });
+const reload = plugins.browserSync.reload;
+
+	
 
 // Styles
 gulp.task('styles', function() {
-  return sass('src/app/styles/main.scss', { style: 'expanded' })
-    .pipe(autoprefixer('last 2 version'))
+  return plugins.rubySass('src/app/styles/main.scss', { style: 'expanded' })
+    .pipe(plugins.autoprefixer('last 2 version'))
     .pipe(gulp.dest('dist/styles'))
-    .pipe(rename({ suffix: '.min' }))
-    .pipe(cssnano())
+    .pipe(plugins.rename({ suffix: '.min' }))
+    .pipe(plugins.cssnano())
     .pipe(gulp.dest('dist/styles'))
-    .pipe(notify({ message: 'Styles task complete' }));
+    .pipe(plugins.notify({ message: 'Styles task complete' }));
 });
 
 // Scripts
 gulp.task('scripts', function() {
   return gulp.src('src/app/scripts/**/*.js')
-    .pipe(jshint('.jshintrc'))
-    .pipe(jshint.reporter('default'))
-    .pipe(concat('main.js'))
+    .pipe(plugins.jshint('.jshintrc'))
+    .pipe(plugins.jshint.reporter('default'))
+    .pipe(plugins.concat('main.js'))
     .pipe(gulp.dest('dist/scripts'))
-    .pipe(rename({ suffix: '.min' }))
-    .pipe(uglify())
+    .pipe(plugins.rename({ suffix: '.min' }))
+    .pipe(plugins.uglify())
     .pipe(gulp.dest('dist/scripts'))
-    .pipe(notify({ message: 'Scripts task complete' }));
+    .pipe(plugins.notify({ message: 'Scripts task complete' }));
 });
 
 // Images
 gulp.task('images', function() {
   return gulp.src('src/app/images/**/*')
-    .pipe(cache(imagemin({ optimizationLevel: 3, progressive: true, interlaced: true })))
+    .pipe(plugins.cache(imagemin({ optimizationLevel: 3, progressive: true, interlaced: true })))
     .pipe(gulp.dest('dist/images'))
-    .pipe(notify({ message: 'Images task complete' }));
+    .pipe(plugins.notify({ message: 'Images task complete' }));
 });
 
 // Clean
 gulp.task('clean', function() {
-  return del(['dist/styles', 'dist/scripts', 'dist/images']);
+  return plugins.del(['dist/styles', 'dist/scripts', 'dist/images']);
 });
 
 // Default task
-gulp.task('default', ['clean'], function() {
-  gulp.start('styles', 'scripts', 'images');
+gulp.task('default', ['clean'], function() {cb =>
+  plugins.runSequence(
+    'styles',
+    ['jshint', 'scripts', 'images'],
+    cb
+)
+  //gulp.start('styles', 'scripts', 'images');
 });
+//
+gulp.task('serve', ['scripts', 'styles'], () => {
+  plugins.browserSync({
+    notify: false,
+    // Customize the Browsersync console logging prefix
+    logPrefix: 'CVG',
+    // Allow scroll syncing across breakpoints
+    scrollElementMapping: ['main', '.mdl-layout'],
+    // Run as an https by uncommenting 'https: true'
+    // Note: this uses an unsigned certificate which on first access
+    //       will present a certificate warning in the browser.
+    // https: true,
+    server: ['.tmp', 'app'],
+    port: 3000
+  });
+
+  gulp.watch(['app/**/*.html'], reload);
+  gulp.watch(['app/styles/**/*.{scss,css}'], ['styles', reload]);
+  gulp.watch(['app/scripts/**/*.js'], ['jshint', 'scripts', reload]);
+  gulp.watch(['app/images/**/*'], reload);
+});
+
+// Build and serve the output from the dist build
+gulp.task('serve:dist', ['default'], () =>
+  plugins.browserSync({
+    notify: false,
+    logPrefix: 'CVG',
+    // Allow scroll syncing across breakpoints
+    scrollElementMapping: ['main', '.mdl-layout'],
+    // Run as an https by uncommenting 'https: true'
+    // Note: this uses an unsigned certificate which on first access
+    //       will present a certificate warning in the browser.
+    // https: true,
+    server: 'dist',
+    port: 3001
+  })
+);
+
+// Lint JavaScript
+gulp.task('jshint', () =>
+  gulp.src('app/scripts/**/*.js')
+    .pipe(plugins.jshint('.jshintrc'))
+    .pipe(plugins.jshint.reporter('default'))
+);
 
 // Watch
 gulp.task('watch', function() {

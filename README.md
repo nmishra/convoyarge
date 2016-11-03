@@ -17,7 +17,7 @@ Setup
 ```git remote add nach git@github.com:nmishra/convoyarge.git```
 5. ```cd ~/products/src/javascript```
 6. Install gulp and dependencies through the following command:
-```npm install jshint@2.9.4 minimatch@3.0.3 gulp gulp-ruby-sass gulp-autoprefixer gulp-cssnano gulp-jshint gulp-concat gulp-uglify gulp-imagemin gulp-notify gulp-rename gulp-livereload gulp-cache del  -g --save-dev```
+```npm install jshint@2.9.4 minimatch@3.0.3 gulp gulp-ruby-sass gulp-autoprefixer gulp-cssnano gulp-jshint gulp-concat gulp-uglify gulp-imagemin gulp-notify gulp-rename gulp-livereload gulp-cache del browser-sync gulp-load-plugins --save-dev```
 7. if you run ```gulp``` , you should be get a message like  
 ```[09:30:08] Using gulpfile ~/products/convoyarge/src/javascript/gulpfile.js
 [09:30:08] Starting 'clean'...
@@ -31,6 +31,7 @@ Setup
 [09:30:08] Finished 'styles' after 32 ms
 [09:30:08] Finished 'scripts' after 25 ms
 [09:30:08] Finished 'images' after 15 ms```  
+8. To serve the webapp, run ```cd ~/products/convoyarge/src/javascript && gulp serve```
 
 Development 
 -----------------------
