@@ -25,6 +25,8 @@ coverage
 
 # Compiled binary addons (http://nodejs.org/api/addons.html)
 build/Release
+src/javascript/dist
+src/javascript/sandbox
 
 # Dependency directories
 node_modules
