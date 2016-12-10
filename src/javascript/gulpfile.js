@@ -1,6 +1,6 @@
 /*!
  * gulp
- * $ npm install gulp-ruby-sass gulp-autoprefixer gulp-cssnano gulp-jshint gulp-concat gulp-uglify gulp-imagemin gulp-notify gulp-rename gulp-livereload gulp-cache del browser-sync gulp-load-plugins eslint eslint-config-google --save-dev
+ * $ npm install broserify vinyl-transform gulp-ruby-sass gulp-autoprefixer gulp-cssnano gulp-jshint gulp-concat gulp-uglify gulp-imagemin gulp-notify gulp-rename gulp-livereload gulp-cache del browser-sync gulp-load-plugins eslint eslint-config-google --save-dev
  */
 
 // Load plugins
@@ -32,11 +32,12 @@ gulp.task('scripts', function() {
 	    var b = plugins.browserify(filename);
 	    return b.bundle();
 	});
-  return gulp.src('app/scripts/**/*.js')
+  return gulp.src('app/scripts/main.js')
 	.pipe(gulp.dest('sandbox/')) // index.js with 'rename'  changes now exists in src/sandbox/index.js
     .pipe(plugins.through2.obj(function (file, enc, next){
             plugins.browserify(file.path) // file.path here will now be src/sandbox/index.js
-				   .bundle(function(err, res){
+			 .transform('stripify')	   
+	                 .bundle(function(err, res){
                     // assumes file.contents is a Buffer
                     file.contents = res;
                     next(null, file);
