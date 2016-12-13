@@ -1,8 +1,14 @@
 /*!
  * gulp
- * $ npm install gulp-ruby-sass gulp-autoprefixer gulp-cssnano gulp-jshint gulp-concat gulp-uglify gulp-imagemin gulp-notify gulp-rename gulp-livereload gulp-cache del browser-sync gulp-load-plugins eslint eslint-config-google --save-dev
+ * $ npm install gulp-ruby-sass gulp-autoprefixer gulp-cssnano gulp-jshint gulp-concat gulp-uglify gulp-imagemin gulp-notify gulp-rename gulp-livereload gulp-cache del browser-sync gulp-load-plugins eslint eslint-config-google vinyl-transform browserify through2 sass stripify --save-dev
  */
-
+//Map of all the project paths
+var paths = {
+	    scripts: 'app/**/*.js',
+	    styles: 'app/styles/*.scss',//['app/styles/*.css', 'app/styles/*.scss'],
+	    images: 'app/images/*',
+	    index: 'app/index.html',
+	 };
 // Load plugins
 var gulp = require('gulp'),
 	plugins = require('gulp-load-plugins')({
@@ -17,7 +23,7 @@ const reload = plugins.browserSync.reload;
 
 // Styles
 gulp.task('styles', function() {
-  return plugins.rubySass('app/styles/main.css', { style: 'expanded' })
+  return plugins.rubySass(paths.styles)
     .pipe(plugins.autoprefixer('last 2 version'))
     .pipe(gulp.dest('dist/styles'))
     .pipe(plugins.rename({ suffix: '.min' }))
@@ -32,16 +38,20 @@ gulp.task('scripts', function() {
 	    var b = plugins.browserify(filename);
 	    return b.bundle();
 	});
-  return gulp.src('app/scripts/**/*.js')
+  return gulp.src(paths.scripts)
 	.pipe(gulp.dest('sandbox/')) // index.js with 'rename'  changes now exists in src/sandbox/index.js
-    .pipe(plugins.through2.obj(function (file, enc, next){
-            plugins.browserify(file.path) // file.path here will now be src/sandbox/index.js
-				   .bundle(function(err, res){
+    //.pipe(plugins.through2.obj(function (file, enc, next){
+      //      plugins.browserify(file.path) // file.path here will now be src/sandbox/index.js
+	//	    .transform('stripify')	   		   
+	  //          .bundle(function(err, res){
                     // assumes file.contents is a Buffer
-                    file.contents = res;
-                    next(null, file);
-                });
-        }))
+	//	    console.log('Testing - '+res);
+		    //var buffer = new Buffer(res, "utf-8");
+		    //buffer.write(res);
+          //          file.contents = res;
+            //        next(null, file);
+              //  });
+       // }))
     // .pipe(plugins.jshint('.jshintrc')) //as of now I have commented this out as I get a bunch of errors
     // .pipe(plugins.jshint.reporter('default')) // reports too many errors
     .pipe(plugins.concat('index.js'))
@@ -55,7 +65,7 @@ gulp.task('scripts', function() {
 // Views task
 gulp.task('views', function() {
   // Get our index.html
-  gulp.src('app/index.html')
+  gulp.src(paths.index)
   // And put it in the dist folder
   .pipe(gulp.dest('dist/'));
 
@@ -68,7 +78,7 @@ gulp.task('views', function() {
 
 // Images
 gulp.task('images', function() {
-  return gulp.src('app/images/**/*')
+  return gulp.src(paths.images)
     .pipe(plugins.cache(imagemin({ optimizationLevel: 3, progressive: true, interlaced: true })))
     .pipe(gulp.dest('dist/images'))
     .pipe(plugins.notify({ message: 'Images task complete' }));
@@ -119,7 +129,7 @@ gulp.task('serve', ['scripts', 'views', 'styles'], () => {
 
   gulp.watch(['app/**/*.html','app/views/**/*.html'], ['views', reload]);
   gulp.watch(['app/styles/**/*.{scss,css}'], ['styles', reload]);
-  gulp.watch(['app/scripts/**/*.js'], ['jshint', 'scripts', reload]);
+  gulp.watch(['app/**/*.js'], ['jshint', 'scripts', reload]);
   gulp.watch(['app/images/**/*'], reload);
   
 });
@@ -142,7 +152,7 @@ gulp.task('serve:dist', ['default'], () =>
 
 // Lint JavaScript
 gulp.task('jshint', () =>
-  gulp.src('app/scripts/**/*.js')
+  gulp.src(paths.scripts)
     .pipe(plugins.jshint('.jshintrc'))
     .pipe(plugins.jshint.reporter('default'))
 );
@@ -151,13 +161,13 @@ gulp.task('jshint', () =>
 gulp.task('watch', function() {
 
   // Watch .scss files
-  gulp.watch('app/styles/**/*.scss', ['styles']);
+  gulp.watch(paths.styles, ['styles']);
 
   // Watch .js files
-  gulp.watch('app/scripts/**/*.js', ['scripts']);
+  gulp.watch(paths.scripts, ['scripts']);
 
   // Watch image files
-  gulp.watch('app/images/**/*', ['images']);
+  gulp.watch(paths.images, ['images']);
 
   // Create LiveReload server
   livereload.listen();
