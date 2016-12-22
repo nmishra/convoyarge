@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input, OnChanges, SimpleChange } from '@angular/core';
 
 @Component({
 	selector: 'map-it',
@@ -6,9 +6,20 @@ import { Component } from '@angular/core';
 	styleUrls: ['app/map-it.component.css']
 })
 
-export class MapItComponent {
-	
-  title: string = 'Map showing the favorite places';
-  lat: number = 51.678418;
-  lng: number = 7.809007;
+export class MapItComponent implements OnChanges{
+  
+  @Input() lat: number;
+  @Input() lng: number;
+  
+  ngOnChanges(changes: {[propKey: string]: SimpleChange}) {
+    let log: string[] = [];
+    for (let propName in changes) {
+      console.log("propName ="+propName);
+      let changedProp = changes[propName];
+      console.log("Changed prop - "+changedProp);
+      let from = JSON.stringify(changedProp.previousValue);
+      let to =   JSON.stringify(changedProp.currentValue);
+      console.log("from - "+from+" to - "+to);
+    }
+  }
 }
