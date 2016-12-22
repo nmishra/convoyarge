@@ -1,0 +1,10 @@
+<h2>Search a favorite destination </h2>
+<div class="form-group move-down">
+      <input  ng2-auto-complete
+      [(ngModel)]="model4"
+      placeholder="Enter Address(min. 2 chars)"
+      [source]="googleGeoCode" 
+      display-property-name="formatted_address"
+      path-to-data="results"
+      min-chars="2" />
+</div>
