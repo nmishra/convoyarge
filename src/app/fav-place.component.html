@@ -5,8 +5,10 @@
       placeholder="Enter Address(min. 2 chars)"
       [source]="googleGeoCode" 
       display-property-name="formatted_address"
+      value-property-name="location"
       path-to-data="results"
       min-chars="2"/>
-      <br/>Mapping address - {{json(model4)}}<br/><br/>
+      <br/>Mapping address - {{model4 | json}} -- {{model4}}<br/><br/>
+      <br/><input type="button" name="mapIt" value="MapIt" (click)="setLatLng(model4)"><br/>
       <map-it [lat]="lat" [lng]="lng"></map-it>
 </div>

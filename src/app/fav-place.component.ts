@@ -19,6 +19,7 @@ export class FavPlaceComponent {
 
   setLatLng(location){
     console.log("SetLatLng called - "+location);
+   
     if(location){
 	    this.lat = location.lat;
 	  	this.lng = location.lng;

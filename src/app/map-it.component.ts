@@ -16,10 +16,10 @@ export class MapItComponent implements OnChanges{
     for (let propName in changes) {
       console.log("propName ="+propName);
       let changedProp = changes[propName];
-      console.log("Changed prop - "+changedProp);
+      //console.log("Changed prop - "+changedProp);
       let from = JSON.stringify(changedProp.previousValue);
       let to =   JSON.stringify(changedProp.currentValue);
-      console.log("from - "+from+" to - "+to);
+      //console.log("from - "+from+" to - "+to);
     }
   }
 }
