@@ -9,6 +9,7 @@
        * element that contains the map. */
       #map {
         height: 100%;
+        width: 100%;
       }
       /* Optional: Makes the sample page fill the window. */
       html, body {
@@ -57,6 +58,58 @@
         font-size: 13px;
         font-weight: 300;
       }
+
+      .openSpan {
+          position: absolute;
+          height: 100%;
+          z-index: 1;
+          top: 0;
+          left: 1150px;
+      }
+
+      .sidenav {
+          height: 100%;
+          width: 0;
+          position: fixed;
+          z-index: 1;
+          top: 0;
+          left: 1150px;
+          background-color: #111;
+          overflow-x: hidden;
+          transition: 0.5s;
+          padding-top: 60px;
+      }
+
+      .sidenav a {
+          padding: 8px 8px 8px 32px;
+          text-decoration: none;
+          font-size: 25px;
+          color: #818181;
+          display: block;
+          transition: 0.3s
+      }
+
+      .sidenav a:hover, .offcanvas a:focus{
+          color: #f1f1f1;
+      }
+
+      .sidenav .closebtn {
+          position: absolute;
+          top: 0;
+          right: 25px;
+          font-size: 36px;
+          margin-left: 50px;
+      }
+
+      #main {
+          transition: margin-left .5s;
+          padding: 16px;
+      }
+
+    @media screen and (max-height: 450px) {
+      .sidenav {padding-top: 15px;}
+      .sidenav a {font-size: 18px;}
+    }
     </style>
   </head>
   <body>
@@ -76,7 +129,16 @@
       <label for="changetype-geocode">Geocodes</label>
     </div>
     <div id="map"></div>
-
+    <div id="mySidenav" class="sidenav">
+      <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+      <a href="#">X</a>
+      <a href="#">Y</a>
+      <a href="#">W</a>
+      <a href="#">Z</a>
+    </div>
+    <div class="openSpan">
+      <span style="font-size:30px;cursor:pointer" onclick="openNav()">&#9776; My Favs</span>
+    </div>
     <script>
       // This example requires the Places library. Include the libraries=places
       // parameter when you first load the API. For example:
@@ -101,6 +163,10 @@
         var marker = new google.maps.Marker({
           map: map,
           anchorPoint: new google.maps.Point(0, -29)
+        });
+
+        marker.addListener('click', function() {
+          map.setCenter(marker.getPosition());
         });
 
         autocomplete.addListener('place_changed', function() {
@@ -140,10 +206,12 @@
             ].join(' ');
           }
 
-          infowindow.setContent('<div><strong>' + place.name + '</strong><br>' + address);
+          infowindow.setContent('<div>'+
+                                    '<input type="text" id="destinationNotes">'+
+                                    '<button type="button">Save</button>'+
+                                '</div>');
           infowindow.open(map, marker);
         });
-
         // Sets a listener on a radio button to change the filter type on Places
         // Autocomplete.
         function setupClickListener(id, types) {
@@ -158,6 +226,16 @@
         setupClickListener('changetype-establishment', ['establishment']);
         setupClickListener('changetype-geocode', ['geocode']);
       }
+
+
+      function openNav() {
+          document.getElementById("mySidenav").style.width = "250px";
+      }
+
+      function closeNav() {
+          document.getElementById("mySidenav").style.width = "0";
+      }
+
     </script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCPWbGCgxUFXCB_j46GRkd6dvllRCP2CYs&libraries=places&callback=initMap"
         async defer></script>
